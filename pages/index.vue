@@ -1,5 +1,6 @@
 <template>
   <v-layout column justify-center align-center>
+
     <v-flex xs12 sm8 md6>
       <div class="text-xs-center">
         <logo/>
@@ -27,6 +28,7 @@
         </v-card-actions>
       </v-card>
     </v-flex>
+    <v-btn small :to="{ name: 'auth-login' }">Login</v-btn>
   </v-layout>
 </template>
 
