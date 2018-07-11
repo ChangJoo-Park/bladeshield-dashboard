@@ -1,3 +1,4 @@
+require('dotenv').config()
 const pkg = require('./package')
 
 const nodeExternals = require('webpack-node-externals')
@@ -59,6 +60,21 @@ module.exports = {
   */
   auth: {
     // See https://auth.nuxtjs.org
+    redirect: {
+      login: '/auth/login',
+      logout: '/',
+      callback: '/auth/callback',
+      user: '/'
+    },
+    strategies: {
+      google: {
+        client_id: process.env.GOOGLE_CLIENT_ID
+      },
+      github: {
+        client_id: process.env.GITHUB_CLIENT_ID,
+        client_secret: process.env.GITHUB_CLIENT_SECRET
+      }
+    }
   },
   /*
   ** Build configuration
