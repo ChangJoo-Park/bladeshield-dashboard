@@ -38,6 +38,7 @@ import VuetifyLogo from '~/components/VuetifyLogo.vue'
 
 export default {
   layout: 'full',
+  auth: false,
   components: {
     Logo,
     VuetifyLogo

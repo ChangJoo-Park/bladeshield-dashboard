@@ -13,7 +13,8 @@
 
 <script>
 export default {
-  layout: 'full'
+  layout: 'full',
+  auth: false
 }
 </script>
 
