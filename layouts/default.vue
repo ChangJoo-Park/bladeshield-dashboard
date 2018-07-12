@@ -87,8 +87,16 @@
         drawer: true,
         fixed: false,
         items: [
-          { icon: 'apps', title: 'Welcome', to: '/' },
-          { icon: 'bubble_chart', title: 'Inspire', to: '/inspire' }
+          {
+            icon: 'apps',
+            title: 'Projects',
+            to: { name: 'organization_name', params: { organization_name: 'hello-world' } }
+          },
+          {
+            icon: 'show_chart',
+            title: 'Stats',
+            to: { name: 'organization_name-stats', params: { organization_name: 'hello-world' } }
+          }
         ],
         miniVariant: false,
         right: true,
