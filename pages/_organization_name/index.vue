@@ -22,24 +22,44 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click.native="dialog = false">닫기</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="dialog = false">저장</v-btn>
+          <v-btn color="blue darken-1" flat @click.native="dialog = false; infoDialog = true">저장</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <project-item :item="{ name: 'Hello', description: 'world', slug: 'hello-world' }" />
+    <!-- Info -->
+    <v-dialog v-model="infoDialog" persistent max-width="500px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">프로젝트가 만들어졌습니다.</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container grid-list-md>
+            <v-layout wrap>
+              <h1>가이드</h1>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" flat @click.native="infoDialog = false">저장</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <project-item :item="{ name: 'Vue', description: 'Vue로 만든 프로젝트', slug: 'project-name' }" />
   </v-layout>
 </template>
 
 <script>
 import ProjectItem from '~/components/organization/ProjectItem.vue'
 export default {
+  auth: true,
   components: {
     ProjectItem
   },
   data () {
     return {
-      dialog: false
+      dialog: false,
+      infoDialog: false
     }
   }
 }
