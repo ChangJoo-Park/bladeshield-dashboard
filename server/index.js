@@ -7,11 +7,7 @@ const host = process.env.HOST || '127.0.0.1'
 const port = process.env.PORT || 3000
 
 const mongoose = require('mongoose')
-const Model = mongoose.model
 const Schema = mongoose.Schema
-mongoose.connect('mongodb://localhost/bladeshield').then(_ => {
-  console.log('connect mongodb successfully.')
-})
 
 const EventSchema = new Schema({
 })
@@ -35,10 +31,10 @@ const OrganizationSchema = new Schema({
   projects: [ProjectSchema]
 })
 
-const Organization = Model('Organization', OrganizationSchema)
-const Project = Model('Project', ProjectSchema)
-const Issue = Model('Issue', IssueSchema)
-const Event = Model('Event', EventSchema)
+const Organization = mongoose.model('Organization', OrganizationSchema)
+const Project = mongoose.model('Project', ProjectSchema)
+const Issue = mongoose.model('Issue', IssueSchema)
+const Event = mongoose.model('Event', EventSchema)
 
 app.set('port', port)
 
@@ -69,4 +65,9 @@ async function start() {
   app.listen(port, host)
   console.log('Server listening on http://' + host + ':' + port) // eslint-disable-line no-console
 }
+// Connect mongoDB
+mongoose.connect('mongodb://localhost/bladeshield').then(_ => {
+  console.log('connect mongodb successfully.')
+})
+
 start()
