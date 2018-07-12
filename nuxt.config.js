@@ -64,7 +64,7 @@ module.exports = {
       login: '/auth/login',
       logout: '/',
       callback: '/auth/callback',
-      user: '/'
+      user: '/app'
     },
     strategies: {
       google: {
