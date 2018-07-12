@@ -28,7 +28,15 @@
         </v-card-actions>
       </v-card>
     </v-flex>
-    <v-btn small :to="{ name: 'auth-login' }">Login</v-btn>
+    <template v-if="$auth.loggedIn">
+      <v-btn small :to="{ name: 'app' }">앱으로</v-btn>
+      <v-btn small @click.native="$auth.logout()">로그아웃</v-btn>
+    </template>
+    <template v-else>
+      <v-btn small :to="{ name: 'auth-login' }">Login</v-btn>
+    </template>
+
+
   </v-layout>
 </template>
 
