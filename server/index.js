@@ -86,31 +86,63 @@ app.get('/api/auth/user', function (req, res) {
 // API
 // Organization
 app
-  .get('/api/me', (req, res) => {})
-  .get('/api/me/organizations', (req, res) => {})
-  .get('/api/organizations', (req, res) => {})
+  .get('/api/me', (req, res) => {
+    res.json({})
+  })
+  .get('/api/me/organizations', (req, res) => {
+    res.json({})
+  })
+  .get('/api/organizations', (req, res) => {
+    res.json({})
+  })
 
 // Project
 app
-  .get('/api/projects', (req, res) => {})
-  .post('/api/projects', (req, res) => {})
-  .get('/api/projects/:project', (req, res) => {})
-  .patch('/api/projects/:project', (req, res) => {})
+  .get('/api/projects', (req, res) => {
+    res.json({})
+  })
+  .post('/api/projects', (req, res) => {
+    res.json({})
+  })
+  .get('/api/projects/:project', (req, res) => {
+    res.json({})
+  })
+  .patch('/api/projects/:project', (req, res) => {
+    res.json({})
+  })
 
 // Issue
 app
-  .get('/api/issues', (req, res) => {})
-  .post('/api/issues', (req, res) => {})
-  .get('/api/issues/:issue', (req, res) => {})
-  .patch('/api/issues/:issue', (req, res) => {})
-  .post('/api/issues/:issue/comments', (req, res) => {})
+  .get('/api/issues', (req, res) => {
+    res.json({})
+  })
+  .post('/api/issues', (req, res) => {
+    res.json({})
+  })
+  .get('/api/issues/:issue', (req, res) => {
+    res.json({})
+  })
+  .patch('/api/issues/:issue', (req, res) => {
+    res.json({})
+  })
+  .post('/api/issues/:issue/comments', (req, res) => {
+    res.json({})
+  })
 
 // Event
 app
-  .get('/api/events', (req, res) => {})
-  .post('/api/events', (req, res) => {})
-  .get('/api/events/:event', (req, res) => {})
-  .patch('/api/events/:event', (req, res) => {})
+  .get('/api/events', (req, res) => {
+    res.json({})
+  })
+  .post('/api/events', (req, res) => {
+    res.json({})
+  })
+  .get('/api/events/:event', (req, res) => {
+    res.json({})
+  })
+  .patch('/api/events/:event', (req, res) => {
+    res.json({})
+  })
 
 // Import and Set Nuxt.js options
 let config = require('../nuxt.config.js')
