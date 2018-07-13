@@ -46,7 +46,10 @@ const ProjectSchema = new Schema({
   name: String,
   description: String,
   owner: String,
-  issues: [Schema.Types.ObjectId],
+  issues: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Issue'
+  }],
   slack: {
     url: String,
     channel: String,
@@ -60,7 +63,10 @@ const OrganizationSchema = new Schema({
   description: String,
   owner: String,
   users: [],
-  projects: [Schema.Types.ObjectId]
+  projects: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Project'
+  }]
 })
 
 const schemes = [OrganizationSchema, ProjectSchema, IssueSchema, EventSchema]
