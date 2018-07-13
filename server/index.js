@@ -121,7 +121,7 @@ app
   .get('/api/organizations/:organization', async (req, res) => {
     try {
       const organizationId = req.params['organization']
-      const org = await Organization.findById(organizationId)
+      const org = await Organization.findById(organizationId).populate('projects')
       res.json(org)
     } catch (error) {
       console.error(error)
@@ -174,11 +174,13 @@ app
     try {
       const { organizationId, name, description } = req.body
       const organization = await Organization.findById(organizationId)
-      const newProject = new Project({ name, description, organization })
+      const newProject = new Project({ name, description, organization: organizationId })
       const savedProject = await newProject.save()
+      organization.projects.push(savedProject)
+      await organization.save()
       res.json(savedProject)
     } catch (error) {
-      console.log('error')
+      console.log('error => ', error)
       res.status(500).json(error)
     }
 
