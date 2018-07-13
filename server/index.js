@@ -4,6 +4,7 @@ const {
   Nuxt,
   Builder
 } = require('nuxt')
+// const { auth } = require('google-auth-library')
 const app = express()
 const host = process.env.HOST || '127.0.0.1'
 const port = process.env.PORT || 3000
@@ -99,11 +100,15 @@ app.get('/api/auth/user', function (req, res) {
 // API
 // Organization
 app
-  .get('/api/me', (req, res) => {
-    res.json({})
-  })
-  .get('/api/me/organizations', (req, res) => {
-    res.json({})
+  .get('/api/me/organizations', async (req, res) => {
+    // FIXME: Using Access Token
+    const { email: owner } = req.query
+    if (!owner) {
+      console.log('email not found')
+      return res.json([])
+    }
+    const organizations = await Organization.find({ owner })
+    res.json(organizations)
   })
   .get('/api/organizations', async (req, res) => {
     try {
@@ -127,6 +132,7 @@ app
     try {
       const { name, description, owner } = req.body
       const newOrg = new Organization({ name, description, owner })
+      newOrg.users.push(owner)
       const saved = await newOrg.save()
       res.json(saved)
     } catch (error) {
