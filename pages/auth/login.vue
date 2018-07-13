@@ -4,9 +4,6 @@
       <div>
         <v-btn color="error" @click="loginWith('google')">Login With Google</v-btn>
       </div>
-      <div>
-        <v-btn color="primary" @click="loginWith('github')">Login With Github</v-btn>
-      </div>
     </v-flex>
   </v-layout>
 </template>
@@ -16,8 +13,16 @@ export default {
   layout: 'full',
   auth: false,
   methods: {
-    loginWith (provider) {
-      this.$auth.loginWith(provider)
+    async loginWith (provider) {
+      try {
+        const result = await this.$auth.loginWith(provider)
+        console.log(result)
+        window.alert('hello')
+        this.$toast.success('Success Login', {icon: "error_outline"})
+      } catch (error) {
+        console.log(error)
+        this.$toast.error('Failed Logging In', {icon: "error_outline"})
+      }
     }
   }
 }
