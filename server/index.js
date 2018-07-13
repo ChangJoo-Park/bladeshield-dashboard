@@ -89,7 +89,8 @@ const Comment = mongoose.model('Comment', CommentSchema)
 
 app.set('port', port)
 
-app.use(bodyParser.json())
+app.use(express.urlencoded({extended: true}));
+app.use(express.json());
 
 app.get('/api/auth/user', function (req, res) {
   res.status(200).json({})
