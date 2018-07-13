@@ -47,7 +47,8 @@ module.exports = {
   modules: [
     // Doc: https://github.com/nuxt-community/axios-module#usage
     '@nuxtjs/axios',
-    '@nuxtjs/auth'
+    '@nuxtjs/auth',
+    '@nuxtjs/toast'
   ],
   /*
   ** Axios module configuration
@@ -75,6 +76,9 @@ module.exports = {
         client_secret: process.env.GITHUB_CLIENT_SECRET
       }
     }
+  },
+  toast: {
+    position: 'top-right'
   },
   /*
   ** Build configuration
