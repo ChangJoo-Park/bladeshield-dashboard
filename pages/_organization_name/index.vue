@@ -11,10 +11,10 @@
           <v-container grid-list-md>
             <v-layout wrap>
               <v-flex xs12>
-                <v-text-field label="이름" required></v-text-field>
+                <v-text-field label="이름" required v-model="name"></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-text-field label="설명" required></v-text-field>
+                <v-text-field label="설명" required v-model="description"></v-text-field>
               </v-flex>
             </v-layout>
           </v-container>
@@ -22,7 +22,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click.native="dialog = false">닫기</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="dialog = false; infoDialog = true">저장</v-btn>
+          <v-btn color="blue darken-1" flat @click.native="onSaveProject">저장</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -45,7 +45,11 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <project-item :item="{ name: 'Vue', description: 'Vue로 만든 프로젝트', slug: 'project-name' }" />
+    <project-item
+      v-for="(item, index) in organization.projects"
+      :key="index"
+      :item="item"
+    />
   </v-layout>
 </template>
 
@@ -56,10 +60,30 @@ export default {
   components: {
     ProjectItem
   },
+  async asyncData ({ app, store, route }) {
+    const organization = await app.$axios.$get(`/api/organizations/${route.params['organization_name']}`)
+    return {
+      organization
+    }
+  },
   data () {
     return {
+      name: '',
+      description: '',
       dialog: false,
       infoDialog: false
+    }
+  },
+  methods: {
+    async onSaveProject () {
+      this.dialog = false
+      const project = await this.$axios.$post('/api/projects', {
+        organizationId: this.organization._id,
+        name: this.name,
+        description: this.description
+      })
+      this.organization.projects.push(project)
+      this.infoDialog = true
     }
   }
 }
