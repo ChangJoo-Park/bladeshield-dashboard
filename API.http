@@ -1,0 +1,49 @@
+@BASE_URL = http://localhost:3000/api
+
+GET {{BASE_URL}}/me HTTP/1.1
+
+###
+GET {{BASE_URL}}/me/organizations HTTP/1.1
+
+###
+GET {{BASE_URL}}/organizations HTTP/1.1
+
+###
+GET {{BASE_URL}}/projects HTTP/1.1
+
+###
+POST {{BASE_URL}}/projects HTTP/1.1
+
+###
+GET {{BASE_URL}}/projects/asdfasdfasdf HTTP/1.1
+
+###
+PATCH  {{BASE_URL}}/projects/asdfasdfasdf HTTP/1.1
+
+###
+GET {{BASE_URL}}/issues HTTP/1.1
+
+###
+POST {{BASE_URL}}/issues HTTP/1.1
+
+###
+GET {{BASE_URL}}/issues/asdfasdf HTTP/1.1
+
+###
+PATCH {{BASE_URL}}/issues/asdfasdf HTTP/1.1
+
+###
+GET {{BASE_URL}}/issues/asdfasdf/comments HTTP/1.1
+
+
+###
+GET {{BASE_URL}}/events HTTP/1.1
+
+###
+POST {{BASE_URL}}/events HTTP/1.1
+
+###
+GET {{BASE_URL}}/events/asdfasdsadfasdf HTTP/1.1
+
+###
+PATCH {{BASE_URL}}/events/asdfasdsadfasdf HTTP/1.1
