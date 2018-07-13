@@ -46,6 +46,10 @@ const ProjectSchema = new Schema({
   name: String,
   description: String,
   owner: String,
+  organization: {
+    type: Schema.Types.ObjectId,
+    ref: 'Issue'
+  },
   issues: [{
     type: Schema.Types.ObjectId,
     ref: 'Issue'
@@ -76,10 +80,12 @@ schemes.forEach(schema => {
   schema.plugin(timestampPlugin)
 })
 
-mongoose.model('Organization', OrganizationSchema)
-mongoose.model('Project', ProjectSchema)
-mongoose.model('Issue', IssueSchema)
-mongoose.model('Event', EventSchema)
+
+const Organization = mongoose.model('Organization', OrganizationSchema)
+const Project = mongoose.model('Project', ProjectSchema)
+const Issue = mongoose.model('Issue', IssueSchema)
+const Event = mongoose.model('Event', EventSchema)
+const Comment = mongoose.model('Comment', CommentSchema)
 
 app.set('port', port)
 
@@ -98,14 +104,64 @@ app
   .get('/api/me/organizations', (req, res) => {
     res.json({})
   })
-  .get('/api/organizations', (req, res) => {
-    res.json({})
+  .get('/api/organizations', async (req, res) => {
+    try {
+      const orgs = await Organization.find()
+      res.json(orgs)
+    } catch (error) {
+      res.status(500).json(error)
+    }
+  })
+  .get('/api/organizations/:organization', async (req, res) => {
+    try {
+      const organizationId = req.params['organization']
+      const org = await Organization.findById(organizationId)
+      res.json(org)
+    } catch (error) {
+      console.error(error)
+      res.status(500).json(error)
+    }
+  })
+  .post('/api/organizations', async (req, res) => {
+    try {
+      const { name, description, owner } = req.body
+      const newOrg = new Organization({ name, description, owner })
+      const saved = await newOrg.save()
+      res.json(saved)
+    } catch (error) {
+      res.status(500).json(error)
+    }
+  })
+  .patch('/api/organizations/:organization', async (req, res) => {
+    try {
+      const { name = '', description = '' } = req.body
+      const organizationId = req.params['organization']
+      const org = await Organization.findById(organizationId)
+      org.name = name || org.name
+      org.description = description || org.description
+      const savedOrg = await org.save()
+      res.json(savedOrg)
+    } catch (error) {
+      res.status(500).json(error)
+    }
   })
 
 // Project
 app
-  .get('/api/projects', (req, res) => {
-    res.json({})
+  .get('/api/projects', async (req, res) => {
+    try {
+      const { organization = '' } = req.query()
+      let projects = []
+      if (organization) {
+        projects = await Project.find({ organization })
+      } else {
+        projects = await Project.find()
+      }
+      res.json(projects)
+    } catch (error) {
+      console.log('error')
+      res.status(500).json(error)
+    }
   })
   .post('/api/projects', (req, res) => {
     res.json({})
