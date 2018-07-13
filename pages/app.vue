@@ -11,10 +11,10 @@
           <v-container grid-list-md>
             <v-layout wrap>
               <v-flex xs12>
-                <v-text-field label="이름" required></v-text-field>
+                <v-text-field label="이름" required v-model="name"></v-text-field>
               </v-flex>
               <v-flex xs12>
-                <v-text-field label="설명" required></v-text-field>
+                <v-text-field label="설명" required v-model="description"></v-text-field>
               </v-flex>
             </v-layout>
           </v-container>
@@ -22,7 +22,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click.native="dialog = false">닫기</v-btn>
-          <v-btn color="blue darken-1" flat @click.native="dialog = false">저장</v-btn>
+          <v-btn color="blue darken-1" flat @click.native="onSaveClicked">저장</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -33,7 +33,11 @@
     >
       <v-layout column wrap>
         <h1 class="title">조직 목록</h1>
-        <organization-item :item="{ name: 'Hello', description: 'world', slug: 'hello-world' }" />
+        <organization-item
+          v-for="(item, index) in organizations"
+          :key="index"
+          :item="item"
+        />
       </v-layout>
     </v-container>
   </v-layout>
@@ -48,15 +52,34 @@ export default {
   components: {
     OrganizationItem
   },
-  asyncData () {},
+  async asyncData ({ app, store }) {
+    const email = store.$auth.$state.user.email
+    const organizations = await app.$axios.$get(`/api/me/organizations?email=${email}`)
+    return {
+      organizations
+    }
+  },
   data () {
     return {
-      dialog: false
+      dialog: false,
+      valid: false,
+      name: '',
+      nameRules: [
+        v => !!v || 'Name is required',
+        v => v.length <= 10 || 'Name must be less than 10 characters'
+      ],
+      description: ''
     }
   },
   methods: {
-    onSaveClicked () {
+    async onSaveClicked () {
       // Create New Org
+      const newOrg = await this.$axios.$post('/api/organizations', {
+        name: this.name,
+        description: this.description,
+        owner: this.$auth.user.email
+      })
+      this.organizations.push(newOrg)
       this.dialog = false
     }
   }
