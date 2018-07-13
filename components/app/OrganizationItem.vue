@@ -9,7 +9,7 @@
         <v-btn
           flat
           dark
-          :to="{ name: 'organization_name', params: { organization_name: item.slug } }">
+          :to="{ name: 'organization_name', params: { organization_name: item._id } }">
           열기
         </v-btn>
       </v-card-actions>
