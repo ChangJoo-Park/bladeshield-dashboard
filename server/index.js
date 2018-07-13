@@ -48,7 +48,7 @@ const ProjectSchema = new Schema({
   owner: String,
   organization: {
     type: Schema.Types.ObjectId,
-    ref: 'Issue'
+    ref: 'Organization'
   },
   issues: [{
     type: Schema.Types.ObjectId,
@@ -163,8 +163,18 @@ app
       res.status(500).json(error)
     }
   })
-  .post('/api/projects', (req, res) => {
-    res.json({})
+  .post('/api/projects', async (req, res) => {
+    try {
+      const { organizationId, name, description } = req.body
+      const organization = await Organization.findById(organizationId)
+      const newProject = new Project({ name, description, organization })
+      const savedProject = await newProject.save()
+      res.json(savedProject)
+    } catch (error) {
+      console.log('error')
+      res.status(500).json(error)
+    }
+
   })
   .get('/api/projects/:project', (req, res) => {
     res.json({})
