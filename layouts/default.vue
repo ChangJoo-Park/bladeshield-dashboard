@@ -39,6 +39,7 @@
 <script>
   export default {
     data() {
+      const { params } = this.$route
       return {
         fixed: true,
         clipped: false,
@@ -47,12 +48,12 @@
           {
             icon: 'apps',
             title: '프로젝트',
-            to: { name: 'organization_name', params: { organization_name: 'hello-world' } }
+            to: { name: 'organizationId', params: { organizationId: params.organizationId } }
           },
           {
             icon: 'show_chart',
             title: '통계',
-            to: { name: 'organization_name-stats', params: { organization_name: 'hello-world' } }
+            to: { name: 'organizationId-stats', params: { organizationId: params.organizationId } }
           }
         ],
         miniVariant: false,
