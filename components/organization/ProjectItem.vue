@@ -9,10 +9,10 @@
         <v-btn
           flat
           :to="{
-            name: 'organization_name-project_name',
+            name: 'organizationId-projects-projectId',
             params: {
-              organization_name: 'hello-world',
-              project_name: 'project-name'
+              organizationId: `${$route.params.organizationId}`,
+              projectId: item._id
             }
           }">
           열기
