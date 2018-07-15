@@ -61,7 +61,7 @@ export default {
     ProjectItem
   },
   async asyncData ({ app, store, route }) {
-    const organization = await app.$axios.$get(`/api/organizations/${route.params['organization_name']}`)
+    const organization = await app.$axios.$get(`/api/organizations/${route.params['organizationId']}`)
     return {
       organization
     }

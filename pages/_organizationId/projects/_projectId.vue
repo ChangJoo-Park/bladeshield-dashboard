@@ -41,6 +41,9 @@
 
 <script>
 export default {
+  async asyncData ({ app, route }) {
+    return {}
+  },
   data () {
     return {
       search: '',
@@ -154,9 +157,9 @@ export default {
   methods: {
     onClickIssue (item) {
       this.$router.push({
-        name: 'organization_name-project_name-issues-issue_number',
+        name: 'organizationId-project_name-issues-issue_number',
         params: {
-          organization_name: 'hello-world',
+          organizationId: 'hello-world',
           project_name: 'project-name',
           issue_number: '11'
         }
