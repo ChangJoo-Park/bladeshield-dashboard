@@ -3,22 +3,39 @@
 GET {{BASE_URL}}/me HTTP/1.1
 
 ###
-GET {{BASE_URL}}/me/organizations HTTP/1.1
+GET {{BASE_URL}}/me/organizations?email=pcjpcj2@gmail.com HTTP/1.1
 
 ###
 GET {{BASE_URL}}/organizations HTTP/1.1
 
 ###
-GET {{BASE_URL}}/projects HTTP/1.1
+GET {{BASE_URL}}/organizations HTTP/1.1
 
 ###
+GET {{BASE_URL}}/organizations/5b48b5313f8a3548808d6c3c HTTP/1.1
+
+### Create Organizations
+POST {{BASE_URL}}/organizations HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "owner": "pcjpcj2@gmail.com",
+  "name": "My Organization",
+  "description": "Organization Description"
+}
+
+###
+GET {{BASE_URL}}/projects HTTP/1.1
+
+### Create Project
 POST {{BASE_URL}}/projects HTTP/1.1
 
 ###
-GET {{BASE_URL}}/projects/asdfasdfasdf HTTP/1.1
+GET {{BASE_URL}}/projects/ HTTP/1.1
 
 ###
-PATCH  {{BASE_URL}}/projects/asdfasdfasdf HTTP/1.1
+PATCH  {{BASE_URL}}/projects/5b489ab1d8bd5538882505ae HTTP/1.1
 
 ###
 GET {{BASE_URL}}/issues HTTP/1.1
