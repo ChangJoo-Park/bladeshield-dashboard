@@ -156,12 +156,13 @@ export default {
   },
   methods: {
     onClickIssue (item) {
+      const { params: { organizationId, projectId }  } = this.$route
       this.$router.push({
-        name: 'organizationId-project_name-issues-issue_number',
+        name: 'organizationId-projects-projectId-issues-issueId',
         params: {
-          organizationId: 'hello-world',
-          project_name: 'project-name',
-          issue_number: '11'
+          organizationId,
+          projectId,
+          issueId: '11'
         }
       })
     }
