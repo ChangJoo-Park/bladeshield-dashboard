@@ -31,6 +31,10 @@ const CommentSchema = new Schema({
 })
 
 const IssueSchema = new Schema({
+  project: {
+    type: Schema.Types.ObjectId,
+    ref: 'Project'
+  },
   events: [{
     type: Schema.Types.ObjectId,
     ref: 'Event'
@@ -39,6 +43,8 @@ const IssueSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Comment'
   }],
+  title: String,
+  source: String,
   assigned: String,
   resolved: Boolean
 })
@@ -185,8 +191,11 @@ app
     }
 
   })
-  .get('/api/projects/:project', (req, res) => {
-    res.json({})
+  .get('/api/projects/:projectId', async (req, res) => {
+    const { projectId } = req.params
+    const { organization = '' } = req.query
+    const project = await Project.findById(projectId).populate('issues')
+    res.json(project)
   })
   .patch('/api/projects/:project', (req, res) => {
     res.json({})
