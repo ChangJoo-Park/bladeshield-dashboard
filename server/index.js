@@ -202,8 +202,6 @@ app
     Object.keys(body).forEach(key => {
       project[key] = body[key]
     })
-    console.log('body => ', body)
-    console.log('project => ', project)
     const savedProject = await project.save()
     res.json(savedProject)
   })
