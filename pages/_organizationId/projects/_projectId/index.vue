@@ -2,33 +2,41 @@
   <div>
     <h1>{{ project.name }}</h1>
     <small>{{ project.description }}</small>
-    <v-dialog v-model="dialog" persistent max-width="300">
+    <v-dialog v-model="dialog" persistent max-width="400">
       <v-btn slot="activator" color="primary" dark>Integrate Slack</v-btn>
       <v-card>
-        <v-card-title class="headline">Slack Integrate</v-card-title>
+        <v-card-title class="headline">Integrate Slack</v-card-title>
+        <v-container grid-list-md>
+          <v-layout wrap>
+            <v-flex xs12>
+              <v-text-field
+                v-model="project.slack.url"
+                label="WebHook URL"
+                required
+              />
+            </v-flex>
+            <v-flex xs12>
+              <v-text-field
+                v-model="project.slack.channel"
+                label="Channel"
+                required
+              />
+            </v-flex>
+            <v-flex xs12>
+              <v-text-field
+                v-model="project.slack.username"
+                label="Username"
+                required
+              />
+            </v-flex>
+          </v-layout>
+        </v-container>
         <v-form>
-          <v-text-field
-            v-model="slack.url"
-            :counter="10"
-            label="WebHook URL"
-            required
-          ></v-text-field>
-          <v-text-field
-            v-model="slack.channel"
-            :counter="10"
-            label="Channel"
-            required
-          ></v-text-field>
-          <v-text-field
-            v-model="slack.username"
-            label="Username"
-            required
-          ></v-text-field>
         </v-form>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="green darken-1" flat @click.native="dialog = false">Close</v-btn>
-          <v-btn color="green darken-1" flat @click.native="dialog = false">Save</v-btn>
+          <v-btn color="green darken-1" flat @click.native="onClickSlackIntegrate">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -74,15 +82,18 @@ export default {
   async asyncData ({ app, route }) {
     const { params: { organizationId, projectId } } = route
     const project = await app.$axios.$get(`/api/projects/${projectId}?organization=${organizationId}`)
+    if (!project.slack) {
+      project.slack = {
+        url: '',
+        channel: '',
+        username: ''
+      }
+    }
     return { project }
   },
   data () {
     return {
-      slack: {
-        url: '',
-        username: '',
-        channel: ''
-      },
+      dialog: false,
       search: '',
       headers: [
         {
@@ -108,6 +119,12 @@ export default {
           issueId: item._id
         }
       })
+    },
+    async onClickSlackIntegrate () {
+      await this.$axios.$patch(`/api/projects/${this.$route.params.projectId}`, {
+        slack: this.project.slack
+      })
+      this.dialog = false
     }
   }
 }
