@@ -17,7 +17,6 @@ export default {
       try {
         const result = await this.$auth.loginWith(provider)
         console.log(result)
-        window.alert('hello')
         this.$toast.success('Success Login', {icon: "error_outline"})
       } catch (error) {
         console.log(error)
