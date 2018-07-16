@@ -64,8 +64,7 @@ const ProjectSchema = new Schema({
   slack: {
     url: String,
     channel: String,
-    username: String,
-    text: String
+    username: String
   }
 })
 
@@ -197,8 +196,16 @@ app
     const project = await Project.findById(projectId).populate('issues')
     res.json(project)
   })
-  .patch('/api/projects/:project', (req, res) => {
-    res.json({})
+  .patch('/api/projects/:project', async (req, res) => {
+    const project = await Project.findById(req.params.project)
+    const body = req.body
+    Object.keys(body).forEach(key => {
+      project[key] = body[key]
+    })
+    console.log('body => ', body)
+    console.log('project => ', project)
+    const savedProject = await project.save()
+    res.json(savedProject)
   })
 
 // Issue
