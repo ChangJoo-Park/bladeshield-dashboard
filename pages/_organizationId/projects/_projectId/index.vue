@@ -2,6 +2,36 @@
   <div>
     <h1>{{ project.name }}</h1>
     <small>{{ project.description }}</small>
+    <v-dialog v-model="dialog" persistent max-width="300">
+      <v-btn slot="activator" color="primary" dark>Integrate Slack</v-btn>
+      <v-card>
+        <v-card-title class="headline">Slack Integrate</v-card-title>
+        <v-form>
+          <v-text-field
+            v-model="slack.url"
+            :counter="10"
+            label="WebHook URL"
+            required
+          ></v-text-field>
+          <v-text-field
+            v-model="slack.channel"
+            :counter="10"
+            label="Channel"
+            required
+          ></v-text-field>
+          <v-text-field
+            v-model="slack.username"
+            label="Username"
+            required
+          ></v-text-field>
+        </v-form>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" flat @click.native="dialog = false">Close</v-btn>
+          <v-btn color="green darken-1" flat @click.native="dialog = false">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-card>
       <v-card-title>
         Issues
@@ -28,12 +58,11 @@
               hide-details
             ></v-checkbox>
           </td>
-          <td @click="onClickIssue(props.item)">{{ props.item.name }}</td>
-          <td class="text-xs-right">{{ props.item.calories }}</td>
-          <td class="text-xs-right">{{ props.item.fat }}</td>
-          <td class="text-xs-right">{{ props.item.carbs }}</td>
-          <td class="text-xs-right">{{ props.item.protein }}</td>
-          <td class="text-xs-right">{{ props.item.iron }}</td>
+          <td @click="onClickIssue(props.item)">{{ props.item.title }}</td>
+          <td class="text-xs-right">{{ props.item.source }}</td>
+          <td class="text-xs-right">{{ props.item.assigned }}</td>
+          <td class="text-xs-right">{{ props.item.events.length }}</td>
+          <td class="text-xs-right">{{ props.item.resolved }}</td>
         </template>
       </v-data-table>
     </v-card>
@@ -49,16 +78,20 @@ export default {
   },
   data () {
     return {
+      slack: {
+        url: '',
+        username: '',
+        channel: ''
+      },
       search: '',
       headers: [
         {
           text: 'Error Message',
           align: 'left',
-          sortable: false,
+          sortable: true,
           value: 'title'
         },
         { text: 'Source', value: 'source' },
-        { text: 'Message', value: 'message' },
         { text: 'Events', value: 'events' },
         { text: 'Users', value: 'users' }
       ]
