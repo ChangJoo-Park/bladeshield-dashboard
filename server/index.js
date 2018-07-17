@@ -1,6 +1,9 @@
 const express = require('express')
-const bodyParser = require('body-parser')
+const axios = require('axios')
+const cors = require('cors')
+
 const {
+
   Nuxt,
   Builder
 } = require('nuxt')
@@ -8,6 +11,8 @@ const {
 const app = express()
 const host = process.env.HOST || '127.0.0.1'
 const port = process.env.PORT || 3000
+
+app.use(cors())
 
 const mongoose = require('mongoose')
 const timestampPlugin = require('./plugins/timestamps')
@@ -211,7 +216,35 @@ app
   .get('/api/issues', (req, res) => {
     res.json({})
   })
-  .post('/api/issues', (req, res) => {
+  .post('/api/issues', async (req, res) => {
+    console.log('issues posted')
+    const { project } = req.query
+    console.log('project id => ', project)
+    if (!project) {
+      res.json({})
+    }
+    const body = req.body
+    console.log('body => ', body)
+    const targetProject = await Project.findById(project)
+    if (targetProject.slack) {
+      const { url, username, channel } = targetProject.slack
+      try {
+        const { source, lineno, colno, message } = body
+        const text =
+        `${source} 의 *${lineno}* 번 행 / *${colno}* 번 열에 에러가 있습니다.
+발생시각 : *${Date.now()}*
+메시지 : *${message}*`
+        await axios({
+          method: 'POST',
+          url,
+          data: {
+            username, channel, text
+          }
+        })
+      } catch (error) {
+        console.log('ERROR!!')
+      }
+    }
     res.json({})
   })
   .get('/api/issues/:issue', (req, res) => {
@@ -266,3 +299,8 @@ mongoose.connect('mongodb://localhost/bladeshield').then(_ => {
 })
 
 start()
+
+
+// ```
+// curl -X POST --data-urlencode "payload={\"channel\": \"#report\", \"username\": \"webhookbot\", \"text\": \"This is posted to #report and comes from a bot named webhookbot.\", \"icon_emoji\": \":ghost:\"}" https://hooks.slack.com/services/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
+// ```
