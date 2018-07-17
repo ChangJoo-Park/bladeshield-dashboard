@@ -221,47 +221,65 @@ app
   .post('/report/projects/:projectId', async (req, res) => {
     console.log('issues posted')
     const { projectId } = req.params
-    if (!projectId) {
-      res.json({})
-    }
-    const error = req.body
-    const targetProject = await Project.findById(projectId)
-    const { message, source, lineno, colno, stack } = error
+    console.log('projectId => ', projectId)
+    try {
+      const errorObject = req.body
+      console.log('errorObject => ', errorObject)
+      const { message, source, lineno, colno, stack } = errorObject
 
-    // Find Issue
-    const existsIssue = await Issue.findOne({
-      title: message,
-      source
-    })
+      const targetProject = await Project.findById(projectId)
+      console.log('targetProject => ', targetProject)
+      if (targetProject === null) {
+        throw new Error('No Project')
+      }
 
-    // Create Event
-    let returnIssue = existsIssue
-
-    if (returnIssue === null) {
-      const newIssue = new Issue({
-        project: targetProject._id,
+      console.log('targetProject => ', targetProject)
+      // Find Issue
+      const existsIssue = await Issue.findOne({
         title: message,
         source
       })
-      returnIssue = await newIssue.save()
-    }
+      console.log('Exists Issue => ', existsIssue)
+      // Create Event
+      let returnIssue = existsIssue
 
-    const newEvent = new Event({
-      message, source, lineno, colno, stack, issue: returnIssue._id
-    })
+      if (returnIssue === null) {
+        const newIssue = new Issue({
+          project: targetProject._id,
+          title: message,
+          source
+        })
+        returnIssue = await newIssue.save()
+        await Project.update({
+          _id: targetProject._id
+        }, {
+          $push: {
+            issues: returnIssue._id
+          }
+        })
 
-    const savedEvent = await newEvent.save()
-
-    await savedEvent.update({
-      _id: returnIssue._id
-    }, {
-      $push: {
-        events: savedEvent
       }
-    })
 
-    sendSlackMessage(targetProject.slack, error)
-    res.status(201).json({})
+      const newEvent = new Event({
+        message, source, lineno, colno, stack, issue: returnIssue._id
+      })
+
+      const savedEvent = await newEvent.save()
+
+      await Issue.update({
+        _id: returnIssue._id
+      }, {
+        $push: {
+          events: savedEvent._id
+        }
+      })
+      console.log('return issue => ', returnIssue)
+      console.log('savedEvent => ', savedEvent)
+      // sendSlackMessage(targetProject.slack, error)
+      res.status(201).json(returnIssue)
+    } catch (error) {
+      res.json(error)
+    }
   })
 
 // Issue
@@ -269,8 +287,10 @@ app
   .get('/api/issues', (req, res) => {
     res.json({})
   })
-  .get('/api/issues/:issue', (req, res) => {
-    res.json({})
+  .get('/api/issues/:issueId', async (req, res) => {
+    const issue = await Issue.findById(req.params.issueId).populate('events')
+
+    res.json(issue)
   })
   .patch('/api/issues/:issue', (req, res) => {
     res.json({})
