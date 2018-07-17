@@ -7,7 +7,8 @@ const {
   Nuxt,
   Builder
 } = require('nuxt')
-// const { auth } = require('google-auth-library')
+
+const { sendSlackMessage } = require('./integrations/slack')
 const app = express()
 const host = process.env.HOST || '127.0.0.1'
 const port = process.env.PORT || 3000
@@ -27,7 +28,11 @@ const EventSchema = new Schema({
   browserVendor: String,
   browserVersion: String,
   os: String,
-  platform: String
+  platform: String,
+  issue: {
+    type: Schema.Types.ObjectId,
+    ref: 'Issue'
+  }
 })
 
 const CommentSchema = new Schema({
@@ -211,40 +216,57 @@ app
     res.json(savedProject)
   })
 
+// Report
+app
+  .post('/report/projects/:projectId', async (req, res) => {
+    console.log('issues posted')
+    const { projectId } = req.params
+    if (!projectId) {
+      res.json({})
+    }
+    const error = req.body
+    const targetProject = await Project.findById(projectId)
+    const { message, source, lineno, colno, stack } = error
+
+    // Find Issue
+    const existsIssue = await Issue.findOne({
+      title: message,
+      source
+    })
+
+    // Create Event
+    let returnIssue = existsIssue
+
+    if (returnIssue === null) {
+      const newIssue = new Issue({
+        project: targetProject._id,
+        title: message,
+        source
+      })
+      returnIssue = await newIssue.save()
+    }
+
+    const newEvent = new Event({
+      message, source, lineno, colno, stack, issue: returnIssue._id
+    })
+
+    const savedEvent = await newEvent.save()
+
+    await savedEvent.update({
+      _id: returnIssue._id
+    }, {
+      $push: {
+        events: savedEvent
+      }
+    })
+
+    sendSlackMessage(targetProject.slack, error)
+    res.status(201).json({})
+  })
+
 // Issue
 app
   .get('/api/issues', (req, res) => {
-    res.json({})
-  })
-  .post('/api/issues', async (req, res) => {
-    console.log('issues posted')
-    const { project } = req.query
-    console.log('project id => ', project)
-    if (!project) {
-      res.json({})
-    }
-    const body = req.body
-    console.log('body => ', body)
-    const targetProject = await Project.findById(project)
-    if (targetProject.slack) {
-      const { url, username, channel } = targetProject.slack
-      try {
-        const { source, lineno, colno, message } = body
-        const text =
-        `${source} 의 *${lineno}* 번 행 / *${colno}* 번 열에 에러가 있습니다.
-발생시각 : *${Date.now()}*
-메시지 : *${message}*`
-        await axios({
-          method: 'POST',
-          url,
-          data: {
-            username, channel, text
-          }
-        })
-      } catch (error) {
-        console.log('ERROR!!')
-      }
-    }
     res.json({})
   })
   .get('/api/issues/:issue', (req, res) => {
@@ -262,13 +284,7 @@ app
   .get('/api/events', (req, res) => {
     res.json({})
   })
-  .post('/api/events', (req, res) => {
-    res.json({})
-  })
   .get('/api/events/:event', (req, res) => {
-    res.json({})
-  })
-  .patch('/api/events/:event', (req, res) => {
     res.json({})
   })
 
