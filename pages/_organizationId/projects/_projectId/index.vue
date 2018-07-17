@@ -3,9 +3,9 @@
     <h1>{{ project.name }}</h1>
     <small>{{ project.description }}</small>
     <v-dialog v-model="dialog" persistent max-width="400">
-      <v-btn slot="activator" color="primary" dark>Integrate Slack</v-btn>
+      <v-btn slot="activator" color="primary" dark>Integrate with Slack</v-btn>
       <v-card>
-        <v-card-title class="headline">Integrate Slack</v-card-title>
+        <v-card-title class="headline">Integrate with Slack</v-card-title>
         <v-container grid-list-md>
           <v-layout wrap>
             <v-flex xs12>
