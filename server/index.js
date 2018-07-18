@@ -8,7 +8,9 @@ const {
   Builder
 } = require('nuxt')
 
-const { sendSlackMessage } = require('./integrations/slack')
+const {
+  sendSlackMessage
+} = require('./integrations/slack')
 const app = express()
 const host = process.env.HOST || '127.0.0.1'
 const port = process.env.PORT || 3000
@@ -20,15 +22,42 @@ const timestampPlugin = require('./plugins/timestamps')
 const Schema = mongoose.Schema
 
 const EventSchema = new Schema({
-  message: String,
-  source: String,
-  lineno: String,
-  colno: String,
-  stack: String,
-  browserVendor: String,
-  browserVersion: String,
-  os: String,
-  platform: String,
+  message: {
+    type: String,
+    default: ''
+  },
+  source: {
+    type: String,
+    default: ''
+  },
+  lineno: {
+    type: Number,
+    default: -1
+  },
+  colno: {
+    type: Number,
+    default: -1
+  },
+  stack: {
+    type: String,
+    default: ''
+  },
+  browserVendor: {
+    type: String,
+    default: ''
+  },
+  browserVersion: {
+    type: String,
+    default: ''
+  },
+  os: {
+    type: String,
+    default: ''
+  },
+  platform: {
+    type: String,
+    default: ''
+  },
   issue: {
     type: Schema.Types.ObjectId,
     ref: 'Issue'
@@ -53,10 +82,22 @@ const IssueSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Comment'
   }],
-  title: String,
-  source: String,
-  assigned: String,
-  resolved: Boolean
+  title: {
+    type: String,
+    default: ''
+  },
+  source: {
+    type: String,
+    default: ''
+  },
+  assigned: {
+    type: String,
+    default: ''
+  },
+  resolved: {
+    type: Boolean,
+    default: false
+  }
 })
 
 const ProjectSchema = new Schema({
@@ -105,7 +146,9 @@ const Comment = mongoose.model('Comment', CommentSchema)
 
 app.set('port', port)
 
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({
+  extended: true
+}));
 app.use(express.json());
 
 app.get('/api/auth/user', function (req, res) {
@@ -117,12 +160,16 @@ app.get('/api/auth/user', function (req, res) {
 app
   .get('/api/me/organizations', async (req, res) => {
     // FIXME: Using Access Token
-    const { email: owner } = req.query
+    const {
+      email: owner
+    } = req.query
     if (!owner) {
       console.log('email not found')
       return res.json([])
     }
-    const organizations = await Organization.find({ owner })
+    const organizations = await Organization.find({
+      owner
+    })
     res.json(organizations)
   })
   .get('/api/organizations', async (req, res) => {
@@ -145,8 +192,16 @@ app
   })
   .post('/api/organizations', async (req, res) => {
     try {
-      const { name, description, owner } = req.body
-      const newOrg = new Organization({ name, description, owner })
+      const {
+        name,
+        description,
+        owner
+      } = req.body
+      const newOrg = new Organization({
+        name,
+        description,
+        owner
+      })
       newOrg.users.push(owner)
       const saved = await newOrg.save()
       res.json(saved)
@@ -156,7 +211,9 @@ app
   })
   .patch('/api/organizations/:organization', async (req, res) => {
     try {
-      const { name = '', description = '' } = req.body
+      const {
+        name = '', description = ''
+      } = req.body
       const organizationId = req.params['organization']
       const org = await Organization.findById(organizationId)
       org.name = name || org.name
@@ -172,10 +229,14 @@ app
 app
   .get('/api/projects', async (req, res) => {
     try {
-      const { organization = '' } = req.query()
+      const {
+        organization = ''
+      } = req.query()
       let projects = []
       if (organization) {
-        projects = await Project.find({ organization })
+        projects = await Project.find({
+          organization
+        })
       } else {
         projects = await Project.find()
       }
@@ -187,9 +248,17 @@ app
   })
   .post('/api/projects', async (req, res) => {
     try {
-      const { organizationId, name, description } = req.body
+      const {
+        organizationId,
+        name,
+        description
+      } = req.body
       const organization = await Organization.findById(organizationId)
-      const newProject = new Project({ name, description, organization: organizationId })
+      const newProject = new Project({
+        name,
+        description,
+        organization: organizationId
+      })
       const savedProject = await newProject.save()
       organization.projects.push(savedProject)
       await organization.save()
@@ -201,8 +270,12 @@ app
 
   })
   .get('/api/projects/:projectId', async (req, res) => {
-    const { projectId } = req.params
-    const { organization = '' } = req.query
+    const {
+      projectId
+    } = req.params
+    const {
+      organization = ''
+    } = req.query
     const project = await Project.findById(projectId).populate('issues')
     res.json(project)
   })
@@ -220,12 +293,20 @@ app
 app
   .post('/report/projects/:projectId', async (req, res) => {
     console.log('issues posted')
-    const { projectId } = req.params
+    const {
+      projectId
+    } = req.params
     console.log('projectId => ', projectId)
     try {
       const errorObject = req.body
       console.log('errorObject => ', errorObject)
-      const { message, source, lineno, colno, stack } = errorObject
+      const {
+        message,
+        source,
+        lineno,
+        colno,
+        stack
+      } = errorObject
 
       const targetProject = await Project.findById(projectId)
       console.log('targetProject => ', targetProject)
@@ -261,7 +342,12 @@ app
       }
 
       const newEvent = new Event({
-        message, source, lineno, colno, stack, issue: returnIssue._id
+        message,
+        source,
+        lineno,
+        colno,
+        stack,
+        issue: returnIssue._id
       })
 
       const savedEvent = await newEvent.save()
