@@ -35,7 +35,8 @@
         <v-card-text>
           <v-container grid-list-md>
             <v-layout wrap>
-              <h1>가이드</h1>
+              <h2>아래 Script를 추가하세요.</h2>
+              <pre>{{ infoURL }}</pre>
             </v-layout>
           </v-container>
         </v-card-text>
@@ -70,6 +71,7 @@ export default {
     return {
       name: '',
       description: '',
+      infoURL: '',
       dialog: false,
       infoDialog: false
     }
@@ -83,6 +85,7 @@ export default {
         description: this.description
       })
       this.organization.projects.push(project)
+      this.infoURL = `<script src="http://localhost:3000/report/projects/${project._id}"/>`
       this.infoDialog = true
     }
   }
