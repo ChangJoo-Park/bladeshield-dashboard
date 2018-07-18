@@ -9,25 +9,13 @@
         <v-container grid-list-md>
           <v-layout wrap>
             <v-flex xs12>
-              <v-text-field
-                v-model="project.slack.url"
-                label="WebHook URL"
-                required
-              />
+              <v-text-field v-model="project.slack.url" label="WebHook URL" required />
             </v-flex>
             <v-flex xs12>
-              <v-text-field
-                v-model="project.slack.channel"
-                label="Channel"
-                required
-              />
+              <v-text-field v-model="project.slack.channel" label="Channel" required />
             </v-flex>
             <v-flex xs12>
-              <v-text-field
-                v-model="project.slack.username"
-                label="Username"
-                required
-              />
+              <v-text-field v-model="project.slack.username" label="Username" required />
             </v-flex>
           </v-layout>
         </v-container>
@@ -44,32 +32,16 @@
       <v-card-title>
         Issues
         <v-spacer></v-spacer>
-        <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
+        <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details></v-text-field>
       </v-card-title>
-      <v-data-table
-        :headers="headers"
-        :items="project.issues"
-        select-all
-        class="elevation-1"
-      >
+      <v-data-table :headers="headers" :items="project.issues" select-all class="elevation-1">
         <template slot="items" slot-scope="props">
           <td>
-            <v-checkbox
-              v-model="props.selected"
-              primary
-              hide-details
-            ></v-checkbox>
+            <v-checkbox v-model="props.selected" primary hide-details></v-checkbox>
           </td>
           <td @click="onClickIssue(props.item)">{{ props.item.title }}</td>
           <td class="text-xs-right">{{ props.item.source }}</td>
-          <td class="text-xs-right">{{ props.item.assigned }}</td>
-          <td class="text-xs-right">{{ props.item.events.length }}</td>
+          <td class="text-xs-right">{{ props.item.events }}</td>
           <td class="text-xs-right">{{ props.item.resolved }}</td>
         </template>
       </v-data-table>
@@ -104,13 +76,13 @@ export default {
         },
         { text: 'Source', value: 'source' },
         { text: 'Events', value: 'events' },
-        { text: 'Users', value: 'users' }
+        { text: 'Resolved', value: 'resolved' }
       ]
     }
   },
   methods: {
     onClickIssue (item) {
-      const { params: { organizationId, projectId }  } = this.$route
+      const { params: { organizationId, projectId } } = this.$route
       this.$router.push({
         name: 'organizationId-projects-projectId-issues-issueId',
         params: {
@@ -131,5 +103,4 @@ export default {
 </script>
 
 <style>
-
 </style>
