@@ -370,11 +370,21 @@ app
 
 // Issue
 app
-  .get('/api/issues', (req, res) => {
-    res.json({})
-  })
   .get('/api/issues/:issueId', async (req, res) => {
-    const issue = await Issue.findById(req.params.issueId).populate('events')
+    const issue = await Issue
+      .findById(req.params.issueId)
+      .populate({
+        path: 'events',
+        options: {
+          sort: { createdAt: -1 }
+        }
+      })
+      .populate({
+        path: 'comments',
+        options: {
+          sort: { createdAt: -1 }
+        }
+      })
 
     res.json(issue)
   })
