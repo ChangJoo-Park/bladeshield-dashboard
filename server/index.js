@@ -1,6 +1,6 @@
 const express = require('express')
-const axios = require('axios')
 const cors = require('cors')
+const uaParser = require('ua-parser-js')
 
 const {
 
@@ -42,21 +42,9 @@ const EventSchema = new Schema({
     type: String,
     default: ''
   },
-  browserVendor: {
-    type: String,
-    default: ''
-  },
-  browserVersion: {
-    type: String,
-    default: ''
-  },
-  os: {
-    type: String,
-    default: ''
-  },
-  platform: {
-    type: String,
-    default: ''
+  useragent: {
+    type: Object,
+    default: {}
   },
   issue: {
     type: Schema.Types.ObjectId,
@@ -292,7 +280,7 @@ app
 // Report
 app
   .post('/report/projects/:projectId', async (req, res) => {
-    console.log('issues posted')
+    const ua = uaParser(req.headers['user-agent'])
     const {
       projectId
     } = req.params
@@ -347,6 +335,7 @@ app
         lineno,
         colno,
         stack,
+        useragent,
         issue: returnIssue._id
       })
 
