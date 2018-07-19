@@ -11,6 +11,7 @@
     <v-btn
       small
       ripple
+      @click="updateIndex(--current)"
       :disabled="!isRemainOlder"
     >
       Older
@@ -18,6 +19,7 @@
     <v-btn
       small
       ripple
+      @click="updateIndex(++current)"
       :disabled="!isRemainNewer"
     >
       Newer
@@ -63,6 +65,13 @@ export default {
   },
   methods: {
     updateIndex(index) {
+      if (index < 0) {
+        this.current = 0
+      } else if (index >= this.total) {
+        this.current = this.total - 1
+      } else {
+        this.current = index
+      }
       this.$emit('updated-index', index)
     }
   }
