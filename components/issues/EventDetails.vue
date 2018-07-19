@@ -7,7 +7,22 @@
       />
       <h3>Event : {{ currentEvent._id }}</h3>
       <h4>{{ currentEvent.createdAt }}</h4>
-      <v-card-text>{{ currentEvent }}</v-card-text>
+      <!-- Message -->
+      <v-card-text>{{ currentEvent.message }}</v-card-text>
+      <!-- Source -->
+      <v-card-text>
+        {{ currentEvent.source }} [{{ currentEvent.lineno }} : {{ currentEvent.colno }}]
+      </v-card-text>
+      <!-- UserAgent -->
+      <v-card-text v-if="currentEvent.useragent">
+        <p><strong>Browser:</strong> {{ currentEvent.useragent.browser.name }} / {{ currentEvent.useragent.browser.version }}</p>
+        <p><strong>Engine:</strong> {{ currentEvent.useragent.engine.name }} / {{ currentEvent.useragent.engine.version }}</p>
+        <p><strong>OS:</strong> {{ currentEvent.useragent.os.name }} / {{ currentEvent.useragent.os.version }}</p>
+        <p><strong>CPU:</strong> {{ currentEvent.useragent.cpu.architecture }}</p>
+      </v-card-text>
+      <!-- Stacktrace -->
+      <!-- <v-card-text v-html="replaceLineFeedToBreak(currentEvent.stack)"></v-card-text> -->
+      <v-card-text><pre>{{currentEvent.stack}}</pre></v-card-text>
     </v-card>
   </v-tab-item>
 </template>
@@ -36,6 +51,9 @@ export default {
   methods: {
     onUpdateCurrentIndex (index) {
       this.currentEvent = this.events[index]
+    },
+    replaceLineFeedToBreak (text) {
+      return text
     }
   }
 }
