@@ -14,7 +14,7 @@
       @click="updateIndex(--current)"
       :disabled="!isRemainOlder"
     >
-      Older
+      Newer
     </v-btn>
     <v-btn
       small
@@ -22,7 +22,7 @@
       @click="updateIndex(++current)"
       :disabled="!isRemainNewer"
     >
-      Newer
+      Older
     </v-btn>
     <v-btn
       small
