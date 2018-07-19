@@ -280,7 +280,7 @@ app
 // Report
 app
   .post('/report/projects/:projectId', async (req, res) => {
-    const ua = uaParser(req.headers['user-agent'])
+    const useragent = uaParser(req.headers['user-agent'])
     const {
       projectId
     } = req.params
