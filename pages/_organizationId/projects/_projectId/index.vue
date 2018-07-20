@@ -41,7 +41,7 @@
           </td>
           <td @click="onClickIssue(props.item)">{{ props.item.title }}</td>
           <td class="text-xs-right">{{ props.item.source }}</td>
-          <td class="text-xs-right">{{ props.item.events }}</td>
+          <td class="text-xs-right">{{ props.item.events.length }}</td>
           <td class="text-xs-right">{{ props.item.resolved }}</td>
         </template>
       </v-data-table>
