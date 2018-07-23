@@ -32,7 +32,7 @@
             <h4>System Details</h4><br>
             <span class="icon">
               <img src="https://icongr.am/devicon/chrome-original.svg?size=64" alt="Chrome" width="64px" height="64px">
-              <span>
+              <span v-if="currentEvent.useragent.browser">
                 <strong>Browser:</strong>
                 {{ currentEvent.useragent.browser.name }} / {{ currentEvent.useragent.browser.version }}
               </span>
@@ -41,10 +41,10 @@
               <img src="https://icongr.am/devicon/windows8-original.svg?size=64" alt="Chrome" width="64px" height="64px">
               <strong>OS:</strong> {{ currentEvent.useragent.os.name }} / {{ currentEvent.useragent.os.version }}
             </span>
-            <span class="icon">
+            <span class="icon" v-if="currentEvent.useragent.engine">
               <strong>Engine:</strong> {{ currentEvent.useragent.engine.name }} / {{ currentEvent.useragent.engine.version }}
             </span>
-            <span class="icon">
+            <span class="icon" v-if="currentEvent.useragent.cpu">
               <strong>CPU:</strong> {{ currentEvent.useragent.cpu.architecture }}
             </span>
           </v-card-text>
