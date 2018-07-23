@@ -3,7 +3,6 @@ const cors = require('cors')
 const uaParser = require('ua-parser-js')
 
 const {
-
   Nuxt,
   Builder
 } = require('nuxt')
@@ -14,8 +13,6 @@ const {
 const app = express()
 const host = process.env.HOST || '127.0.0.1'
 const port = process.env.PORT || 3000
-
-app.use(cors())
 
 const mongoose = require('mongoose')
 const timestampPlugin = require('./plugins/timestamps')
@@ -137,7 +134,7 @@ const Event = mongoose.model('Event', EventSchema)
 const Comment = mongoose.model('Comment', CommentSchema)
 
 app.set('port', port)
-
+app.use(cors())
 app.use(express.urlencoded({
   extended: true
 }));
@@ -285,10 +282,11 @@ app
 app
   .post('/report/projects/:projectId', async (req, res) => {
     const useragent = uaParser(req.headers['user-agent'])
-    const {
-      projectId
-    } = req.params
+
     try {
+      const {
+        projectId
+      } = req.params
       const errorObject = req.body
       const {
         message,
@@ -296,7 +294,6 @@ app
         lineno,
         colno,
         stack,
-        url
       } = errorObject
       const targetProject = await Project.findById(projectId)
       if (targetProject === null) {
@@ -334,12 +331,12 @@ app
         colno,
         stack,
         useragent,
-        url,
+        url: `${req.protocol}://${req.get('host')}${req.originalUrl}`,
         issue: returnIssue._id
       })
 
       const savedEvent = await newEvent.save()
-
+      console.log('savedEvent')
       await Issue.update({
         _id: returnIssue._id
       }, {
@@ -419,8 +416,3 @@ mongoose.connect('mongodb://localhost/bladeshield').then(_ => {
 })
 
 start()
-
-
-// ```
-// curl -X POST --data-urlencode "payload={\"channel\": \"#report\", \"username\": \"webhookbot\", \"text\": \"This is posted to #report and comes from a bot named webhookbot.\", \"icon_emoji\": \":ghost:\"}" https://hooks.slack.com/services/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
-// ```
