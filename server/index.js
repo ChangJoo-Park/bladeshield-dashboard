@@ -49,6 +49,10 @@ const EventSchema = new Schema({
   issue: {
     type: Schema.Types.ObjectId,
     ref: 'Issue'
+  },
+  url: {
+    type: String,
+    default: ''
   }
 })
 
@@ -149,14 +153,14 @@ app
   .get('/api/me/organizations', async (req, res) => {
     // FIXME: Using Access Token
     const {
-      email: owner
+      email
     } = req.query
-    if (!owner) {
+    if (!email) {
       console.log('email not found')
       return res.json([])
     }
     const organizations = await Organization.find({
-      owner
+      users: email
     })
     res.json(organizations)
   })
@@ -284,31 +288,26 @@ app
     const {
       projectId
     } = req.params
-    console.log('projectId => ', projectId)
     try {
       const errorObject = req.body
-      console.log('errorObject => ', errorObject)
       const {
         message,
         source,
         lineno,
         colno,
-        stack
+        stack,
+        url
       } = errorObject
-
       const targetProject = await Project.findById(projectId)
-      console.log('targetProject => ', targetProject)
       if (targetProject === null) {
         throw new Error('No Project')
       }
 
-      console.log('targetProject => ', targetProject)
       // Find Issue
       const existsIssue = await Issue.findOne({
         title: message,
         source
       })
-      console.log('Exists Issue => ', existsIssue)
       // Create Event
       let returnIssue = existsIssue
 
@@ -326,7 +325,6 @@ app
             issues: returnIssue._id
           }
         })
-
       }
 
       const newEvent = new Event({
@@ -336,6 +334,7 @@ app
         colno,
         stack,
         useragent,
+        url,
         issue: returnIssue._id
       })
 
